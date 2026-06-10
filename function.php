@@ -1,0 +1,27 @@
+<?php
+function dbconnect(){
+    static $connect=null;
+    if($connect===null){
+        $connect=mysqli_connect('localhost','root','','employees');
+        if(!$connect){
+            die('Erreur de connexion a la base de donnee : '. mysqli_connect_error());
+        }
+        mysqli_set_charset($connect, 'utf8mb4');
+    }
+    return $connect;
+}
+    
+function list_departments(){
+    $sql="SELECT de.dept_no, de.dept_name, em.first_name, em.last_name from departments as de
+    join dept_manager as dem on dem.dept_no=de.dept_no
+    join employees as em on em.emp_no=dem.emp_no where year(to_date)>=2026;
+";
+    $news_req=mysqli_query(dbconnect(),$sql);
+    $result=array();
+    while($news=mysqli_fetch_assoc($news_req)){
+        $result[]=$news;
+    }
+    mysqli_free_result($news_req);
+    return $result;
+}   
+?>
